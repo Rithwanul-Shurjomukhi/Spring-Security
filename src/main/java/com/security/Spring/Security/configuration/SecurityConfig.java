@@ -2,6 +2,7 @@ package com.security.Spring.Security.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -13,22 +14,74 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
+
+/*
+*  This class holds the logic of application security
+*  Here I have Used 3 filters for every request.
+*  first one is public filter, second one is user filter,
+*  third one is admin filter. Later use the in memory database
+*  for the users.
+* */
+
+
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
+    private final String[] swaggerUrl = {
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/swagger-resources",
+            "/v3/api-docs/**",
+            "/proxy/**"
+    };
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(0)
+    public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 
-        http.authorizeHttpRequests(auth ->
-                auth.requestMatchers("/api/public").permitAll()
-                        .requestMatchers("/api/user/user").hasRole("USER")
-                        .requestMatchers("/api/admin/admin").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-
-        ).httpBasic(Customizer.withDefaults());
+        http.authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers(swaggerUrl).permitAll()
+        );
+        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
 
         return http.build();
+
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers("/api/user/**").hasRole("USER")
+                .anyRequest().authenticated()
+        );
+
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
+        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
+
+        return http.build();
+
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain adminSecurityFilter(HttpSecurity http) throws Exception {
+
+        http.authorizeHttpRequests((authorize) -> authorize
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+        );
+        http.formLogin(Customizer.withDefaults());
+        http.httpBasic(Customizer.withDefaults());
+        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
+
+        return http.build();
+
     }
 
     @Bean
