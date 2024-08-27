@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    @Secured("ROLE_USER")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> generalUser() {
         return new ResponseEntity<String>("Hi general user", HttpStatus.OK);
     }

@@ -3,7 +3,6 @@ package com.security.Spring.Security.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -38,51 +37,20 @@ public class SecurityConfig {
     };
 
     @Bean
-    @Order(0)
     public SecurityFilterChain publicSecurityFilter(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/public/**").permitAll()
                 .requestMatchers(swaggerUrl).permitAll()
-        );
-        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
-
-        return http.build();
-
-    }
-
-    @Bean
-    @Order(1)
-    public SecurityFilterChain userSecurityFilter(HttpSecurity http) throws Exception {
-
-        http.authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers("/api/user/**").hasRole("USER")
                 .anyRequest().authenticated()
         );
-
-        http.formLogin(Customizer.withDefaults());
-        http.httpBasic(Customizer.withDefaults());
         http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
 
         return http.build();
 
     }
 
-    @Bean
-    @Order(2)
-    public SecurityFilterChain adminSecurityFilter(HttpSecurity http) throws Exception {
-
-        http.authorizeHttpRequests((authorize) -> authorize
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-        );
-        http.formLogin(Customizer.withDefaults());
-        http.httpBasic(Customizer.withDefaults());
-        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
-
-        return http.build();
-
-    }
 
     @Bean
     public UserDetailsService userDetailsService() {

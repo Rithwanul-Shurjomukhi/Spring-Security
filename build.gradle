@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2'
@@ -30,7 +32,24 @@ dependencies {
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiDocVersion"
 
 
+	// https://mvnrepository.com/artifact/org.projectlombok/lombok
+	implementation 'org.projectlombok:lombok:1.18.34'
 
+	// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+	implementation 'com.mysql:mysql-connector-j:9.0.0'
+
+	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa
+	implementation 'org.springframework.data:spring-data-jpa:3.3.3'
+
+	implementation project(":user-security")
+
+
+}
+
+dependencyManagement {
+	imports {
+		mavenBom SpringBootPlugin.BOM_COORDINATES
+	}
 }
 
 tasks.named('test') {

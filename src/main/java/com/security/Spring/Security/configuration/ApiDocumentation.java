@@ -1,13 +1,17 @@
 package com.security.Spring.Security.configuration;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,11 +19,21 @@ import java.util.List;
 @Configuration
 public class ApiDocumentation {
 
+    private static final String SCHEME_NAME = "basicAuth";
+    private static final String SCHEME = "basic";
+
     @Value("${persistence.openapi.prod-url}")
     private String productionUrl;
 
     @Value("${persistence.openapi.dev-url}")
     private String devUrl;
+
+    private SecurityScheme createSecurityScheme() {
+        return new SecurityScheme()
+                .name(SCHEME_NAME)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme(SCHEME);
+    }
 
     @Bean
     public OpenAPI openApi() {
@@ -48,10 +62,17 @@ public class ApiDocumentation {
                 .version("1.0.0");
 
 
+        Components components = new Components();
+        components.addSecuritySchemes(SCHEME_NAME,
+                createSecurityScheme());
+
+
 
         List<Server> servers = Arrays.asList(devServer, productionServer);
 
-        return new OpenAPI().info(info).servers(servers);
+        return new OpenAPI().info(info).servers(servers)
+                .components(components)
+                .addSecurityItem(new SecurityRequirement().addList(SCHEME_NAME));
 
     }
 }
