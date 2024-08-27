@@ -1,13 +1,7 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.3.2'
 	id 'io.spring.dependency-management' version '1.1.6'
-}
-
-ext {
-	openApiDocVersion = '2.0.4'
 }
 
 group = 'com.security'
@@ -27,29 +21,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
-//	implementation 'org.springframework.security:spring-security-config'
-	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$openApiDocVersion"
-
-
-	// https://mvnrepository.com/artifact/org.projectlombok/lombok
-	implementation 'org.projectlombok:lombok:1.18.34'
-
-	// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
-	implementation 'com.mysql:mysql-connector-j:9.0.0'
-
-	// https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa
-	implementation 'org.springframework.data:spring-data-jpa:3.3.3'
-
-	implementation project(":user-security")
-
-
-}
-
-dependencyManagement {
-	imports {
-		mavenBom SpringBootPlugin.BOM_COORDINATES
-	}
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-config'
 }
 
 tasks.named('test') {
