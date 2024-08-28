@@ -32,6 +32,9 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
 
 
+    /*
+    *  Swagger api's are not required authentication
+    * */
     private final String[] swaggerUrl = {
             "/swagger-ui.html",
             "/swagger-ui/**",
@@ -57,9 +60,15 @@ public class SecurityConfig {
                 ).httpBasic(httpBasic -> {
                     httpBasic.authenticationEntryPoint(authenticationEntryPoint);
                 });
-//        http.exceptionHandling(ex -> ex.accessDeniedPage("/UnAuthorized"));
 
+        /*
+        *  CORS disabled
+        * */
         http.cors(AbstractHttpConfigurer::disable);
+
+        /*
+        *  CSRF token disable
+        * */
         http.csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
@@ -67,6 +76,9 @@ public class SecurityConfig {
     }
 
 
+    /*
+    *  Creating user in the memory
+    * */
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User
