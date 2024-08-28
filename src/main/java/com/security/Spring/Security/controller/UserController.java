@@ -18,15 +18,15 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    @Secured("ROLE_USER")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> generalUser() {
-        return new ResponseEntity<String>("Hi general user", HttpStatus.OK);
+        return new ResponseEntity<>("Hi general user", HttpStatus.OK);
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?>  adminEndpoint() {
-        return new ResponseEntity<String>("Hi admin user", HttpStatus.OK);
+        return new ResponseEntity<>("Hi admin user", HttpStatus.OK);
 
     }
 }
